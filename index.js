@@ -78,7 +78,6 @@ const docDefinition = {
 // pdf.pipe(fs.createWriteStream('doc.pdf'))
 // pdf.end()
 
-
 app.get('/get/:name', (req, res) => {
     const pdf = printer.createPdfKitDocument({
         content: 'Olá ' + req.params.name
