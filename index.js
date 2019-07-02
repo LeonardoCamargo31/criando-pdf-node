@@ -1,4 +1,6 @@
 const PdfPrinter = require('pdfmake')
+const express = require('express')
+const app = express()
 
 //definimos as fontes
 const fonts = {
@@ -27,11 +29,11 @@ for (let i = 0; i < 300; i++) {
 //definimos o conteudo do documento
 const docDefinition = {
     content: [
-        { 
+        {
             image: 'images/logo.png',
             //width:100,
             //height:100 ou fazer ela encaixar em 100 por 100
-            fit:[100,100]
+            fit: [100, 100]
         },
         { text: 'Fullstack Master' },
         {
@@ -50,28 +52,45 @@ const docDefinition = {
             color: 'red',
         }
     },
-    footer:(page,pages)=>{
+    footer: (page, pages) => {
         return {
-            columns:[
+            columns: [
                 'Esta documento é apenas para teste',
                 {
-                    alignment:'right',//quero alinhar a direita
-                    text:[
-                        {text:page.toString(),italics:true},
-                        {text:' de ',italics:true},
-                        {text:pages.toString(),italics:true}
+                    alignment: 'right',//quero alinhar a direita
+                    text: [
+                        { text: page.toString(), italics: true },
+                        { text: ' de ', italics: true },
+                        { text: pages.toString(), italics: true }
                     ]
                 }
             ],
-            margin: [40,0]
+            margin: [40, 0]
         }
     }
 }
 
-const pdf = printer.createPdfKitDocument(docDefinition)
-//fazer a gravação do pdf em disco
-const fs = require('fs')
-//pipe esta conectando, está injetando um ReadStream(manda dados) neste WriteStream(recebe dados),
-//WriteStream manda os dados para um arquivo, no caso doc.pdf
-pdf.pipe(fs.createWriteStream('doc.pdf'))
-pdf.end()
+// const pdf = printer.createPdfKitDocument(docDefinition)
+// //fazer a gravação do pdf em disco
+// const fs = require('fs')
+// //pipe esta conectando, está injetando um ReadStream(manda dados) neste WriteStream(recebe dados),
+// //WriteStream manda os dados para um arquivo, no caso doc.pdf
+// pdf.pipe(fs.createWriteStream('doc.pdf'))
+// pdf.end()
+
+
+app.get('/get/:name', (req, res) => {
+    const pdf = printer.createPdfKitDocument({
+        content: 'Olá ' + req.params.name
+    })
+    //só uma configuração quero mostrar inline, e nome do arquivo com nome da pessoa
+    //res.header('Content-disposition', 'inline;filename=' + req.params.name)
+    res.header('Content-disposition', 'attachment;filename=' + req.params.name+'.pdf')//attachment para já baixar o arquivo
+    res.header('Content-type','application/pdf')//esse arquivo é um pdf
+    pdf.pipe(res)//consigo fazer um pipe no res, res não deixa de ser um WriteStream, ele recebe dados
+    pdf.end()
+})
+
+app.listen(3000, () => {
+    console.log('Running...')
+})
