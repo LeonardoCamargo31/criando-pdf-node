@@ -27,6 +27,12 @@ for (let i = 0; i < 300; i++) {
 //definimos o conteudo do documento
 const docDefinition = {
     content: [
+        { 
+            image: 'images/logo.png',
+            //width:100,
+            //height:100 ou fazer ela encaixar em 100 por 100
+            fit:[100,100]
+        },
         { text: 'Fullstack Master' },
         {
             table: {
@@ -42,6 +48,22 @@ const docDefinition = {
         },
         inativo: {
             color: 'red',
+        }
+    },
+    footer:(page,pages)=>{
+        return {
+            columns:[
+                'Esta documento é apenas para teste',
+                {
+                    alignment:'right',//quero alinhar a direita
+                    text:[
+                        {text:page.toString(),italics:true},
+                        {text:' de ',italics:true},
+                        {text:pages.toString(),italics:true}
+                    ]
+                }
+            ],
+            margin: [40,0]
         }
     }
 }
